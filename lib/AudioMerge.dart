@@ -69,7 +69,7 @@ class _AudioMergeState extends State<AudioMerge> {
 
   selectAudio() async{
     FilePickerResult video = await FilePicker.platform.pickFiles(
-        type: FileType.audio,
+        type: FileType.custom,
         allowedExtensions: ['mp3'],
     );
     if (video != null ) {

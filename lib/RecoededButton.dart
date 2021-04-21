@@ -270,7 +270,7 @@ class _RecordButtonState extends State<RecordButton>
           child: new Padding(
             padding: const EdgeInsets.all(15.0),
             child: GestureDetector(
-              onLongPress: () {
+              onTap: () {
                 onVideoRecordButtonPressed();
                 timer = new Timer.periodic(
                   Duration(milliseconds: 1),
@@ -289,17 +289,17 @@ class _RecordButtonState extends State<RecordButton>
                   }),
                 );
               },
-              onLongPressEnd: (e) {
-                percentage = 0.0;
-                newPercentage = 0.0;
-                timer.cancel();
-                onStopButtonPressed();
-                // playVideo();
-              },
+              // onLongPressEnd: (e) {
+              //   percentage = 0.0;
+              //   newPercentage = 0.0;
+              //   timer.cancel();
+              //   onStopButtonPressed();
+              //   // playVideo();
+              // },
               child: Container(
                 child: Center(
                   child: new Text(
-                    "Hold",
+                    "Rec",
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
