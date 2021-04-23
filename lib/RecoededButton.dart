@@ -247,6 +247,7 @@ class _RecordButtonState extends State<RecordButton>
               print(_timer.tick);
           if (_timer.tick ==15) {
             _timer.cancel();
+
             onStopButtonPressed(context);
             // playVideo();
           }
