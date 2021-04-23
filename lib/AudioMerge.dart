@@ -69,8 +69,7 @@ class _AudioMergeState extends State<AudioMerge> {
 
   selectAudio() async{
     FilePickerResult video = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['mp3'],
+        type: FileType.audio,
     );
     if (video != null ) {
       print(" video file ...${video.files.single.path}");
@@ -233,7 +232,6 @@ class AudioPlayers extends StatefulWidget {
 
 class _AudioPlayersState extends State<AudioPlayers> {
   FlutterFFmpeg _flutterFFmpeg;
-  AnimationController _animationIconController1;
   AudioCache audioCache;
   AudioPlayer audioPlayer;
   Duration _duration = new Duration();

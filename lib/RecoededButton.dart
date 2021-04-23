@@ -127,21 +127,13 @@ class _RecordButtonState extends State<RecordButton>
   double newPercentage = 0.0;
   double videoTime = 0.0;
   String videoPath;
-  Timer timer;
-  AnimationController percentageAnimationController;
+  Timer _timer;
+
+
+
   @override
   void initState() {
     super.initState();
-    setState(() {
-      percentage = 0.0;
-    });
-    percentageAnimationController = new AnimationController(
-        vsync: this, duration: new Duration(milliseconds: 1000))
-      ..addListener(() {
-        setState(() {
-          percentage = lerpDouble(percentage, newPercentage, percentageAnimationController.value);
-        });
-      });
   }
 
   String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
@@ -153,7 +145,7 @@ class _RecordButtonState extends State<RecordButton>
     });
   }
 
-  void onStopButtonPressed() async{
+  void onStopButtonPressed(BuildContext context) async{
       // final Directory extDir = await getApplicationDocumentsDirectory();
       // final String dirPath = '${extDir.path}/Movies/flutter_test';
       // await Directory(dirPath).create(recursive: true);
@@ -162,7 +154,11 @@ class _RecordButtonState extends State<RecordButton>
       if (mounted) setState(() {});
       if (file != null) {
         print("233333333333333@@@@@${file.path}");
-        playVideo(file.path);
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context)=>
+                VideoEditor(path: file.path,
+                ),)
+        );
       }
     });
   }
@@ -235,81 +231,66 @@ class _RecordButtonState extends State<RecordButton>
   @override
   void dispose() {
     super.dispose();
-    percentageAnimationController.dispose();
+    // percentageAnimationController.dispose();
     widget.controller.dispose();
   }
 
-  void playVideo(String videoPath) {
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context)=>
-            VideoEditor(path: videoPath,
-            ),)
-    );
-    // Navigator.push(
-    //   context,
-    //   CupertinoPageRoute(
-    //     builder: (_) => VideoEditor(
-    //       path: videoPath,
-    //     ),
-    //   ),
-    // );
-  }
 
   @override
   Widget build(BuildContext context) {
-    return new Center(
-      child: new Container(
+
+    void startVideo(){
+      onVideoRecordButtonPressed();
+      _timer = Timer.periodic(
+        Duration(seconds: 1),
+            (Timer t) => setState(() {
+              print(_timer.tick);
+          if (_timer.tick==16) {
+            _timer.cancel();
+            onStopButtonPressed(context);
+            // playVideo();
+          }
+          // percentageAnimationController.forward(from: 0.0);
+          // print((t.tick / 1000).toStringAsFixed(0));
+        }),
+      );
+    }
+
+  void  videostop(){
+      _timer.cancel();
+      onStopButtonPressed(context);
+  }
+
+    return  Center(
+      child:  Container(
         height: 100.0,
         width: 100.0,
-        child: new CustomPaint(
-          foregroundPainter: new RecordButtonPainter(
-              lineColor: Colors.black12,
-              completeColor: Color(0xFFee5253),
-              completePercent: percentage,
-              width: 8.0),
-          child: new Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: GestureDetector(
-              onTap: () {
-                onVideoRecordButtonPressed();
-                timer = new Timer.periodic(
-                  Duration(milliseconds: 1),
-                      (Timer t) => setState(() {
-                    percentage = newPercentage;
-                    newPercentage += 1;
-                    if (newPercentage > 9390.0) {
-                      percentage = 0.0;
-                      newPercentage = 0.0;
-                      timer.cancel();
-                      onStopButtonPressed();
-                      // playVideo();
-                    }
-                    percentageAnimationController.forward(from: 0.0);
-                    // print((t.tick / 1000).toStringAsFixed(0));
-                  }),
-                );
-              },
-              // onLongPressEnd: (e) {
-              //   percentage = 0.0;
-              //   newPercentage = 0.0;
-              //   timer.cancel();
-              //   onStopButtonPressed();
-              //   // playVideo();
-              // },
-              child: Container(
-                child: Center(
-                  child: new Text(
-                    "Rec",
+        child:  Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: GestureDetector(
+            onTap: (){
+              _timer==null?startVideo():videostop();
+            },
+            // onLongPressEnd: (e) {
+            //   percentage = 0.0;
+            //   newPercentage = 0.0;
+            //   timer.cancel();
+            //   onStopButtonPressed();
+            //   // playVideo();
+            // },
+            child: Container(
+              child: Center(
+                child: Text(
+                    _timer==null?"Rec":"${_timer.tick}",
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
-                  ),
-                ),
-                decoration: BoxDecoration(
-                  color: Color(0xFFee5253),
-                  borderRadius: BorderRadius.circular(50),
-                ),
+                  )
+              ),
+              decoration: BoxDecoration(
+                color: Color(0xFFee5253),
+                borderRadius: BorderRadius.circular(50),
               ),
             ),
           ),
@@ -317,36 +298,37 @@ class _RecordButtonState extends State<RecordButton>
       ),
     );
   }
+
 }
 
-class RecordButtonPainter extends CustomPainter {
-  Color lineColor;
-  Color completeColor;
-  double completePercent;
-  double width;
-  RecordButtonPainter(
-      {this.lineColor, this.completeColor, this.completePercent, this.width});
-  @override
-  void paint(Canvas canvas, Size size) {
-    Paint line = new Paint()
-      ..color = lineColor
-      ..strokeCap = StrokeCap.round
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = width;
-    Paint complete = new Paint()
-      ..color = completeColor
-      ..strokeCap = StrokeCap.round
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = width;
-    Offset center = new Offset(size.width / 2, size.height / 2);
-    double radius = min(size.width / 2, size.height / 2);
-    canvas.drawCircle(center, radius, line);
-    double arcAngle = 2 * pi * (completePercent / 9390);
-    canvas.drawArc(new Rect.fromCircle(center: center, radius: radius), -pi / 2,
-        arcAngle, false, complete);
-  }
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
-  }
-}
+// class RecordButtonPainter extends CustomPainter {
+//   Color lineColor;
+//   Color completeColor;
+//   double completePercent;
+//   double width;
+//   RecordButtonPainter(
+//       {this.lineColor, this.completeColor, this.completePercent, this.width});
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     Paint line = new Paint()
+//       ..color = lineColor
+//       ..strokeCap = StrokeCap.round
+//       ..style = PaintingStyle.stroke
+//       ..strokeWidth = width;
+//     Paint complete = new Paint()
+//       ..color = completeColor
+//       ..strokeCap = StrokeCap.round
+//       ..style = PaintingStyle.stroke
+//       ..strokeWidth = width;
+//     Offset center = new Offset(size.width / 2, size.height / 2);
+//     double radius = min(size.width / 2, size.height / 2);
+//     canvas.drawCircle(center, radius, line);
+//     double arcAngle = 2 * pi * (completePercent / 9390);
+//     canvas.drawArc(new Rect.fromCircle(center: center, radius: radius), -pi / 2,
+//         arcAngle, false, complete);
+//   }
+//   @override
+//   bool shouldRepaint(CustomPainter oldDelegate) {
+//     return true;
+//   }
+// }
