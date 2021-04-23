@@ -80,6 +80,12 @@ class _AudioMergeState extends State<AudioMerge> {
         print(_videoFile);
       });
     }
+    // // var path = await AudioPicker.pickAudio();
+    // setState(() {
+    //   _videoFile = File(path);
+    // });
+
+
   }
 
   @override

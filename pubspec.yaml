@@ -41,6 +41,7 @@ dependencies:
   flutter_ffmpeg: 0.4.0
 
 
+
   camera: 0.8.0
   #  camera_camera: ^1.0.34+1
   #path_provider: 1.6.28
