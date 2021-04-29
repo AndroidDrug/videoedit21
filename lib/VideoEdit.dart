@@ -8,8 +8,8 @@ import 'package:videdit/Dragger.dart';
 import 'package:videdit/VideoTrim.dart';
 
 class VideoEditor extends StatefulWidget {
-  final String path;
-  const VideoEditor({Key key, this.path}) : super(key: key);
+  final File file;
+  const VideoEditor({Key key, this.file}) : super(key: key);
 
   @override
   _VideoEditorState createState() => _VideoEditorState();
@@ -28,7 +28,7 @@ class _VideoEditorState extends State<VideoEditor> {
   void initState() {
     super.initState();
       BetterPlayerDataSource betterPlayerData =
-      BetterPlayerDataSource(BetterPlayerDataSourceType.file, widget.path);
+      BetterPlayerDataSource(BetterPlayerDataSourceType.file, widget.file.path);
       _controller = BetterPlayerController(
           BetterPlayerConfiguration(
               autoPlay: false,
@@ -45,7 +45,7 @@ class _VideoEditorState extends State<VideoEditor> {
               )),
           betterPlayerDataSource: betterPlayerData);
       _videoPlayerControllerFuture =
-          _controller.videoPlayerController.setFileDataSource(File(widget.path));
+          _controller.videoPlayerController.setFileDataSource(widget.file);
     }
 
   @override
@@ -127,7 +127,7 @@ class _VideoEditorState extends State<VideoEditor> {
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               PlayRecordedVideo(
-                                                path: widget.path,
+                                                path: widget.file,
                                               )));
                                 },
                                 child: Container(
@@ -168,7 +168,7 @@ class _VideoEditorState extends State<VideoEditor> {
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               AudioMerge(
-                                                path: widget.path,
+                                                path: widget.file.path,
                                               )));
                                 },
                                 child: Container(
@@ -209,7 +209,7 @@ class _VideoEditorState extends State<VideoEditor> {
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               DraggerIcons(
-                                                path: widget.path,
+                                                path: widget.file.path,
                                               )));
                                 },
                                 child: Container(

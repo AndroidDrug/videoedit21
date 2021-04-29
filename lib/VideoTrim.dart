@@ -9,7 +9,7 @@ import 'package:videdit/VideoEdit.dart';
 
 class PlayRecordedVideo extends StatefulWidget {
 
-  final String path;
+  final File path;
 
   PlayRecordedVideo({@required this.path});
 
@@ -42,7 +42,7 @@ class _PlayRecordedVideoState extends State<PlayRecordedVideo> {
     print(widget.path);
     // setState(() {});
     BetterPlayerDataSource betterPlayerData =
-    BetterPlayerDataSource(BetterPlayerDataSourceType.file, widget.path);
+    BetterPlayerDataSource(BetterPlayerDataSourceType.file, widget.path.path);
     _controller =  BetterPlayerController(
         BetterPlayerConfiguration(
             autoPlay: false,
@@ -59,7 +59,7 @@ class _PlayRecordedVideoState extends State<PlayRecordedVideo> {
               enableOverflowMenu: false,
             )),
         betterPlayerDataSource: betterPlayerData);
-    _videoPlayerControllerFuture= _controller.videoPlayerController.setFileDataSource(File(widget.path));
+    _videoPlayerControllerFuture= _controller.videoPlayerController.setFileDataSource(widget.path);
   }
 
   @override
@@ -113,7 +113,7 @@ class _PlayRecordedVideoState extends State<PlayRecordedVideo> {
                             padding: const EdgeInsets.only(top:20.0),
                             child: SliderContainer(totalDuration: _controller
                                 .videoPlayerController.value.duration,
-                              controller: _controller,fileName: widget.path,),
+                              controller: _controller,fileName: widget.path.path,),
                           ),
                         ],
                       ),
@@ -427,7 +427,7 @@ class _SliderContainerState extends State<SliderContainer> {
                   Navigator.pushReplacement(context,
                       MaterialPageRoute(builder:
                           (context)=>VideoEditor
-                        (path:filePath)
+                        (file:File(filePath))
                       ));
 
                 } else {

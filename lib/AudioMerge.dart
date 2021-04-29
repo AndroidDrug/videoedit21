@@ -281,6 +281,7 @@ class _AudioPlayersState extends State<AudioPlayers> {
 
   @override
   void dispose() {
+    audioPlayer.stop();
     audioPlayer.dispose();
     super.dispose();
   }
@@ -429,7 +430,7 @@ class _AudioPlayersState extends State<AudioPlayers> {
                     Navigator.pushReplacement(context,
                         MaterialPageRoute(builder:
                             (context)=>VideoEditor
-                          (path:filePath)
+                          (file:File(filePath))
                         ));
 
                   } else {

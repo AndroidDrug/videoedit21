@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 import 'package:camera/camera.dart';
@@ -129,8 +130,6 @@ class _RecordButtonState extends State<RecordButton>
   String videoPath;
   Timer _timer;
 
-
-
   @override
   void initState() {
     super.initState();
@@ -153,10 +152,10 @@ class _RecordButtonState extends State<RecordButton>
     stopVideoRecording().then((file) {
       if (mounted) setState(() {});
       if (file != null) {
-        print("233333333333333@@@@@${file.path}");
+        print("233333333333333@@@@@${file}");
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context)=>
-                VideoEditor(path: file.path,
+                VideoEditor(file:File(file.path),
                 ),)
         );
       }
@@ -245,9 +244,8 @@ class _RecordButtonState extends State<RecordButton>
         Duration(seconds: 1),
             (Timer t) => setState(() {
               print(_timer.tick);
-          if (_timer.tick ==15) {
+          if (_timer.tick >16) {
             _timer.cancel();
-
             onStopButtonPressed(context);
             // playVideo();
           }
